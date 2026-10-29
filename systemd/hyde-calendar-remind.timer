@@ -1,0 +1,11 @@
+[Unit]
+Description=Deliver due cached calendar reminders
+PartOf=graphical-session.target
+
+[Timer]
+OnCalendar=*-*-* *:*:00
+AccuracySec=5s
+Persistent=true
+
+[Install]
+WantedBy=graphical-session.target

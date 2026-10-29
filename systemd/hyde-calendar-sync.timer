@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh private calendar cache every five minutes
+PartOf=graphical-session.target
+
+[Timer]
+OnActiveSec=30s
+OnUnitActiveSec=5min
+AccuracySec=10s
+
+[Install]
+WantedBy=graphical-session.target

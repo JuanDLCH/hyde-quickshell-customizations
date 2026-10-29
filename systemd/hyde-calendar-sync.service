@@ -1,0 +1,9 @@
+[Unit]
+Description=HyDE Calendar sync
+PartOf=graphical-session.target
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=@HOME@/.local/share/hyde-calendar/venv/bin/python @HOME@/.local/share/hyde-calendar/app/backend.py sync
+TimeoutStartSec=240
