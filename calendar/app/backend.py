@@ -3,7 +3,15 @@ from __future__ import annotations
 import calendar, contextlib, datetime as dt, fcntl, hashlib, json, os, pathlib, sqlite3, subprocess, sys, tempfile, urllib.parse
 from zoneinfo import ZoneInfo
 os.umask(0o077)
-TZ = ZoneInfo('America/Bogota')
+def _local_zone():
+    # System timezone: $TZ, else the /etc/localtime symlink target, else UTC.
+    name = os.environ.get('TZ') or ''
+    if not name:
+        with contextlib.suppress(OSError):
+            name = os.path.realpath('/etc/localtime').split('/zoneinfo/', 1)[-1]
+    try: return ZoneInfo(name)
+    except Exception: return ZoneInfo('UTC')
+TZ = _local_zone()
 CONFIG = pathlib.Path(os.environ.get('XDG_CONFIG_HOME', pathlib.Path.home()/'.config'))/'hyde-calendar'
 STATE = pathlib.Path(os.environ.get('XDG_STATE_HOME', pathlib.Path.home()/'.local/state'))/'hyde-calendar'
 SCOPES = ['https://www.googleapis.com/auth/calendar.calendarlist.readonly', 'https://www.googleapis.com/auth/calendar.events.readonly']
@@ -101,7 +109,7 @@ def shift_month(month,delta):
 def month_bounds(month):
     y,m=map(int,month.split('-')); start=dt.datetime(y,m,1,tzinfo=TZ); end=dt.datetime.fromisoformat(shift_month(month,1)+'-01').replace(tzinfo=TZ); return start,end
 
-def stamp(part,timezone='America/Bogota'):
+def stamp(part,timezone=str(TZ)):
     if 'dateTime' in part:
         value=dt.datetime.fromisoformat(part['dateTime'].replace('Z','+00:00'))
         return value.replace(tzinfo=ZoneInfo(part.get('timeZone',timezone))) if value.tzinfo is None else value

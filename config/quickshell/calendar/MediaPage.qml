@@ -11,10 +11,12 @@ TabPage {
     property bool open: false
     signal focusPlayer()
 
-    // Change these for your location.
-    readonly property string city: "Medellín"
-    readonly property real lat: 6.2442
-    readonly property real lon: -75.5812
+    // Weather location comes from ~/.config/hyde-qs/location.json, e.g.
+    //   {"city": "Madrid", "lat": 40.4168, "lon": -3.7038}
+    // Without that file the weather card stays hidden.
+    property string city: ""
+    property real lat: NaN
+    property real lon: NaN
 
     // ---------------- music ----------------
     readonly property var player: {
@@ -44,17 +46,30 @@ TabPage {
     })
     function code(c) { return codes[c] || ["device_thermostat", "—"] }
     Process {
+        id: location
+        command: ["sh", "-c", "cat \"${XDG_CONFIG_HOME:-$HOME/.config}/hyde-qs/location.json\" 2>/dev/null"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                try {
+                    const l = JSON.parse(text)
+                    page.city = l.city || ""; page.lat = Number(l.lat); page.lon = Number(l.lon)
+                    if (!isNaN(page.lat) && !isNaN(page.lon)) weather.running = true
+                } catch (e) {}
+            }
+        }
+    }
+    Process {
         id: weather
         command: ["curl", "-s", "--max-time", "10",
             "https://api.open-meteo.com/v1/forecast?latitude=" + page.lat + "&longitude=" + page.lon +
             "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m" +
             "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max" +
-            "&timezone=America%2FBogota&forecast_days=5"]
+            "&timezone=auto&forecast_days=5"]
         stdout: StdioCollector {
             onStreamFinished: { try { const d = JSON.parse(text); if (d.current) page.wx = d } catch (e) {} }
         }
     }
-    Timer { interval: 1800000; repeat: true; running: true; triggeredOnStart: true; onTriggered: weather.running = true }
+    Timer { interval: 1800000; repeat: true; running: true; triggeredOnStart: true; onTriggered: location.running = true }
 
     component Transport: Rectangle {
         id: tb
