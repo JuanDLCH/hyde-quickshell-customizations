@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "~/.claude/hooks/start.sh" } ] }
+    ],
+    "Notification": [
+      { "hooks": [ { "type": "command", "command": "~/.claude/hooks/notify.sh" } ] }
+    ],
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "~/.claude/hooks/done.sh" } ] }
+    ]
+  }
+}
