@@ -122,7 +122,7 @@ install_file "$SRC/config/hypr/hyde-qs.lua" "$HOME/.config/hypr/hyde-qs.lua"
 install_file "$SRC/config/hypr/hypridle.conf" "$HOME/.config/hypr/hypridle.conf"
 install_file "$SRC/config/hypr/hyprsunset.conf" "$HOME/.config/hypr/hyprsunset.conf"
 HLUA="$HOME/.config/hypr/hyprland.lua"
-if [[ -f $HLUA ]] && ! grep -qF "$MARK_BEGIN" "$HLUA"; then
+if [[ -f $HLUA ]] && ! grep -qF -- "$MARK_BEGIN" "$HLUA"; then
     echo "   append  require(\"hyde-qs\") to ~/.config/hypr/hyprland.lua"
     if ! ((DRY)); then
         mkdir -p "$BACKUP/.config/hypr"; cp -a "$HLUA" "$BACKUP/.config/hypr/hyprland.lua"
