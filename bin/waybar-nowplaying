@@ -1,0 +1,24 @@
+#!/bin/sh
+# Waybar custom module: two-line "title / artist" for the active player. Empty output (no player) hides the module.
+btn=$1
+st=$(playerctl status 2>/dev/null) || { echo '{"text":""}'; exit 0; }
+[ "$st" = Playing ] || [ "$st" = Paused ] || { echo '{"text":""}'; exit 0; }
+# Browsers leave stale idle players behind (e.g. Firefox "is playing media"): show only real playback,
+# or a paused track that has an artist. Anything else counts as "no music".
+meta=$(playerctl metadata --format '{{title}}	{{artist}}' 2>/dev/null)
+title=${meta%%	*}; artist=${meta#*	}
+case $title in *"is playing media"*|"") echo '{"text":""}'; exit 0 ;; esac
+[ "$st" = Playing ] || [ -n "$artist" ] || { echo '{"text":""}'; exit 0; }
+case $btn in
+    prev) printf '{"text":"󰒮","tooltip":false}\n'; exit 0 ;;
+    next) printf '{"text":"󰒭","tooltip":false}\n'; exit 0 ;;
+    play) [ "$st" = Playing ] && printf '{"text":"󰏤","tooltip":false}\n' || printf '{"text":"󰐊","tooltip":false}\n'; exit 0 ;;
+esac
+playerctl metadata --format '{{title}}	{{artist}}' 2>/dev/null | python3 -c '
+import sys, json, html
+t, _, a = sys.stdin.read().rstrip("\n").partition("\t")
+cut = lambda s, n: s if len(s) <= n else s[: n - 1] + "…"
+e = lambda s: html.escape(s, quote=False)
+text = "<span size=\"9500\">%s</span>" % e(cut(t, 18))
+if a: text += "\n<span size=\"8500\" alpha=\"65%%\">%s</span>" % e(cut(a, 22))
+print(json.dumps({"text": text, "tooltip": False}))'

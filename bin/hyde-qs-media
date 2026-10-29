@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+# Media helpers for the waybar music widget and the dashboard.
+#   hyde-qs-media cover         print path of a rounded album-art PNG for the active player
+#   hyde-qs-media seek get|set  playback position as 0..100
+#   hyde-qs-media focus-player  focus the window that is playing music
+set -u
+
+cover() {
+    local st url key out src cache="${XDG_CACHE_HOME:-$HOME/.cache}/hyde-qs"
+    st=$(playerctl status 2>/dev/null) || return 0
+    [[ $st == Playing || $st == Paused ]] || return 0
+    url=$(playerctl metadata mpris:artUrl 2>/dev/null) || return 0
+    [[ -n $url ]] || return 0
+    mkdir -p "$cache"
+    key=$(printf %s "$url" | sha1sum | cut -c1-16)
+    out="$cache/cover-$key.png"
+    if [[ ! -s $out ]]; then
+        case $url in
+            file://*) src=$(python3 -c 'import sys,urllib.parse as u;print(u.unquote(u.urlparse(sys.argv[1]).path))' "$url") ;;
+            http*) src="$cache/dl-$key"; curl -sfL -m 5 -o "$src" "$url" || return 0 ;;
+            *) return 0 ;;
+        esac
+        magick "$src[0]" -resize 96x96^ -gravity center -extent 96x96 \
+            \( -size 96x96 xc:none -fill white -draw 'roundrectangle 0,0,95,95,22,22' \) \
+            -compose DstIn -composite "$out" 2>/dev/null || return 0
+        rm -f "$cache/dl-$key"
+        find "$cache" -name 'cover-*.png' -mtime +2 -delete 2>/dev/null
+    fi
+    printf '%s\n' "$out"
+}
+
+seek() {
+    local len pos
+    len=$(playerctl metadata mpris:length 2>/dev/null) || { echo 0; return 0; }
+    [[ $len =~ ^[0-9]+$ && $len -gt 0 ]] || { echo 0; return 0; }
+    case ${1:-get} in
+        get)
+            pos=$(playerctl position 2>/dev/null) || pos=0
+            awk -v p="$pos" -v l="$len" 'BEGIN { printf "%d\n", p * 1000000 * 100 / l }' ;;
+        set)   # $2 = 0..100
+            awk -v v="${2:-0}" -v l="$len" 'BEGIN { printf "%.3f\n", v * l / 100 / 1000000 }' |
+                xargs -r playerctl position ;;
+    esac
+}
+
+focus_player() {
+    local title artist name addr clients
+    title=$(playerctl metadata title 2>/dev/null) || title=
+    artist=$(playerctl metadata artist 2>/dev/null) || artist=
+    name=$(playerctl metadata --format '{{playerName}}' 2>/dev/null) || name=
+    [[ -n $title$name ]] || { notify-send "Player" "Nothing is playing"; return 0; }
+    clients=$(hyprctl clients -j)
+    # 0) PWA (firefoxpwa): casar el host de la URL del reproductor con el sitio instalado
+    #    y enfocar la ventana FFPWA-<ulid>, aunque haya otra pestaña de Firefox con el mismo sitio.
+    local url host ulid
+    url=$(playerctl metadata xesam:url 2>/dev/null) || url=
+    host=${url#*://}; host=${host%%[/?#]*}
+    if [[ -n $host && -r $HOME/.local/share/firefoxpwa/config.json ]]; then
+        ulid=$(jq -r --arg h "$host" '[.sites[] | select((.config.document_url // .manifest.start_url // "") | test("^https?://" + ($h|gsub("\\.";"\\.")) + "[/?#]|^https?://" + ($h|gsub("\\.";"\\.")) + "$")) | .ulid][0] // empty' "$HOME/.local/share/firefoxpwa/config.json")
+        [[ -n $ulid ]] && addr=$(jq -r --arg c "FFPWA-$ulid" '[.[] | select(.class==$c)][0].address // empty' <<<"$clients")
+    fi
+    # 1) ventana cuyo título contiene el de la canción (navegador/PWA)
+    [[ -n $addr ]] || addr=$(jq -r --arg t "$title" 'if $t=="" then empty else
+        [.[] | select(.title|ascii_downcase|contains($t|ascii_downcase))][0].address // empty end' <<<"$clients")
+    # 2) ventana cuya clase coincide con el reproductor (spotify, vlc, mpv…)
+    [[ -n $addr ]] || addr=$(jq -r --arg n "$name" 'if $n=="" then empty else
+        [.[] | select(.class|ascii_downcase|contains($n|ascii_downcase))][0].address // empty end' <<<"$clients")
+    [[ -n $addr ]] || { notify-send "Player" "Couldn't find the player window"; return 0; }
+    hyprctl eval "hl.dispatch(hl.dsp.focus({window='address:$addr'}))" >/dev/null
+}
+
+case ${1:-} in
+    cover)        cover ;;
+    seek)         seek "${2:-get}" "${3:-}" ;;
+    focus-player) focus_player ;;
+    *) echo "usage: ${0##*/} {cover|seek get|seek set N|focus-player}" >&2; exit 2 ;;
+esac

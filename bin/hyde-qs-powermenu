@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Toggle the Quickshell power menu; fall back to a wlogout strip if Quickshell is not running it.
+if pgrep -f "quickshell -c powermenu" >/dev/null; then
+    quickshell ipc -c powermenu call power toggle && exit 0
+fi
+if pgrep -x wlogout >/dev/null; then pkill -x wlogout; exit 0; fi
+card=104 gap=16
+read -r W H < <(hyprctl -j monitors | jq -r '.[]|select(.focused)|"\((.width/.scale)|floor) \((.height/.scale)|floor)"')
+mx=$(( (W - (6*card + 5*gap)) / 2 )); my=$(( (H - card) / 2 ))
+exec wlogout -l "$HOME/.config/wlogout/layout_3" -C "$HOME/.config/wlogout/style_3.css" \
+    -b 6 -c "$gap" -r 0 -L "$mx" -R "$mx" -T "$my" -B "$my" --protocol layer-shell

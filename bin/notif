@@ -1,0 +1,3 @@
+#!/bin/sh
+# Control the Quickshell notification center: notif {toggle|open|close|toggleDnd|clear|sub <wifi|bluetooth>}
+f=${1:-toggle}; [ $# -gt 0 ] && shift; exec quickshell ipc -c notifications call notifications "$f" "$@"
