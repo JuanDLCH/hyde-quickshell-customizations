@@ -1,0 +1,17 @@
+# secrets and credentials: never commit
+token.json
+client.json
+client_secret*.json
+credentials*.json
+*.pem
+*.key
+.env
+
+# backups, generated and local files
+*.bak
+*.bak-*
+*.orig
+__pycache__/
+venv/
+theme.css
+.cache/
