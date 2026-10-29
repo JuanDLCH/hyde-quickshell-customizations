@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface><object class="GtkMenu" id="menu"><child><object class="GtkMenuItem" id="calendar-item"><child><object class="GtkCalendar" id="calendar"><property name="show-week-numbers">True</property></object></child></object></child></object></interface>

@@ -1,0 +1,74 @@
+/* Coffee palette: Waybar follows the wallbash colours (same source as the dashboard and
+   notification center) instead of the static Catppuccin greys from theme.css. */
+@define-color main-bg shade(@wallbash_1xa1, 0.62);
+@define-color main-fg @wallbash_1xa9;
+@define-color wb-act-bg @wallbash_1xa7;
+@define-color wb-act-fg shade(@wallbash_1xa1, 0.55);
+@define-color wb-hvr-bg @wallbash_3xa7;
+@define-color wb-hvr-fg shade(@wallbash_1xa1, 0.55);
+
+/* User custom styles */
+
+/* SwayNC bell; existing HyDE bar style remains in charge. */
+#custom-control-center { padding: 0 7px; color: @wallbash_1xa7; }
+#custom-control-center.notification { color: @wallbash_3xa7; }
+#custom-control-center.dnd-notification, #custom-control-center.dnd-none { color: alpha(@wallbash_txt1, 0.65); }
+
+/* Indicadores que solo aparecen cuando la cámara o el touchpad se apagan con Fn.
+   Misma geometría y hover que el icono del micrófono. */
+window#waybar.top #custom-camera,
+window#waybar.top #custom-touchpad,
+window#waybar.top #custom-profile {
+ font-family: "JetBrainsMono Nerd Font Mono"; font-size: 12px;
+ min-width: 14px; padding: 0 4px; margin-top: 4px; margin-bottom: 4px;
+ color: @wallbash_3xa7;
+}
+window#waybar.top #custom-camera:hover,
+window#waybar.top #custom-touchpad:hover,
+window#waybar.top #custom-profile:hover {
+ background-color: @wb-hvr-bg; color: @identity-hover-fg; border-radius: 10pt;
+}
+
+/* Carátula en el reproductor de la barra. */
+window#waybar.top #image.cover { margin: 4px 5px 4px 4px; padding: 0; }
+/* Título y artista apilados. */
+window#waybar.top #track { margin: 0; padding: 0; }
+window#waybar.top #mpris.title { font-size: 10px; margin: 2px 0 0; padding: 0 3px; }
+window#waybar.top #mpris.artist { font-size: 9px; margin: 0 0 2px; padding: 0 3px; opacity: 0.65; }
+
+/* Larger right-hand icons. */
+window#waybar.top #pulseaudio,
+window#waybar.top #pulseaudio.muted,
+window#waybar.top #pulseaudio.source-muted,
+window#waybar.top #pulseaudio.microphone,
+window#waybar.top #custom-camera,
+window#waybar.top #custom-touchpad,
+window#waybar.top #custom-profile { font-size: 16px; min-width: 18px; padding: 0 5px; }
+window#waybar.top #battery { font-size: 12px; }
+
+/* Cover + title + artist behave as one item (click opens the notification center). */
+window#waybar.top #nowplaying { border-radius: 10pt; padding: 0 3px; margin: 3px 0; }
+window#waybar.top #nowplaying:hover { background-color: @wb-hvr-bg; }
+window#waybar.top #nowplaying:hover #mpris { color: @identity-hover-fg; }
+
+/* Compact now-playing so the bar keeps its configured 40 px height. */
+window#waybar.top #nowplaying { margin: 0; padding: 0 3px; }
+window#waybar.top #track { margin: 0; padding: 0; }
+window#waybar.top #mpris.title { font-size: 9.5px; margin: 0; padding: 0 3px; min-height: 0; }
+window#waybar.top #mpris.artist { font-size: 8.5px; margin: 0; padding: 0 3px; min-height: 0; }
+window#waybar.top #image.cover { margin: 0 5px 0 3px; }
+
+/* Center title+artist vertically inside the pill (the stacked labels sat ~3px high). */
+window#waybar.top #track { margin-top: 3px; }
+
+/* Music: Waybar groups never hide when all their modules are empty, so the pill background lives on the
+   children (cover, title/artist, prev/play/next) instead of on #music. No player = nothing drawn, no empty pill. */
+window#waybar.top #music { background: transparent; margin: 0; padding: 0; min-width: 0; min-height: 0; }
+window#waybar.top #image.cover, window#waybar.top #custom-nowplaying, window#waybar.top #custom-mprev,
+window#waybar.top #custom-mplay, window#waybar.top #custom-mnext {
+ background: alpha(@main-fg, 0.035); margin: 4px 0; border-radius: 0;
+}
+window#waybar.top #image.cover { margin: 0; background: transparent; padding: 0; min-width: 0; min-height: 0; border-radius: 0; }
+window#waybar.top #custom-nowplaying { margin-left: 3px; border-radius: 12px 0 0 12px; padding: 0 6px 0 8px; font-size: 9px; }
+window#waybar.top #custom-mnext { margin-right: 3px; padding-right: 6px; border-radius: 0 12px 12px 0; }
+window#waybar.top #custom-nowplaying:hover { background: @wb-hvr-bg; }

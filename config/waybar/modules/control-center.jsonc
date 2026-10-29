@@ -1,0 +1,22 @@
+{
+  "custom/control-center": {
+    "format": "{icon}",
+    "return-type": "json",
+    "exec": "cat @HOME@/.local/state/hyde-notifications/state.json",
+    "interval": 1,
+        "on-click": "@HOME@/.local/bin/notif toggle",
+    "on-click-right": "@HOME@/.local/bin/notif toggleDnd",
+    "tooltip": true,
+    "escape": true,
+    "format-icons": {
+      "notification": "󰂚",
+      "none": "󰂜",
+      "dnd-notification": "󰂛",
+      "dnd-none": "󰪑",
+      "inhibited-notification": "󰂚",
+      "inhibited-none": "󰂜",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    }
+  }
+}

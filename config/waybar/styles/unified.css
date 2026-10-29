@@ -1,0 +1,166 @@
+/* Restore the selected Hyprdots/HyDE cascade; user adaptations only. */
+@import url("@HOME@/.local/share/waybar/styles/hyprdots.css");
+@import url("@HOME@/.cache/hyde/wallbash/gtk.css");
+/* main-bg/main-fg/wb-act/wb-hvr are supplied by HyDE theme.css afterwards. */
+@define-color identity-fg mix(@main-fg,@wallbash_txt1,0.35);
+@define-color identity-hover-fg shade(@wb-hvr-fg,0.25);
+window#waybar { background: alpha(@main-bg,0.96); color: @identity-fg; border: 1px solid alpha(@main-fg,0.13); border-radius: 14px; }
+window#waybar > box { padding: 0 7px; }
+window#waybar.top .modules-left, window#waybar.top .modules-center, window#waybar.top .modules-right { background: transparent; margin: 0; padding: 0; }
+window#waybar.top label.module { margin: 4px 2px; padding: 0 5px; color: @identity-fg; }
+#identity, #performance, #music { background: alpha(@main-fg,0.035); border-radius: 12px; margin: 4px 3px; padding: 0 3px; }
+window#waybar.top #custom-arch { font-family: "JetBrainsMono Nerd Font"; font-size: 14px; min-width: 20px; margin: 3px 3px 3px 0; padding: 0 5px; border-radius: 10pt; background: alpha(@main-fg,0.06); color: @identity-fg; }
+window#waybar.top #custom-arch:hover { background-color: @wb-hvr-bg; color: @identity-hover-fg; }
+#workspaces { padding: 0; }
+window#waybar.top #workspaces button { min-width: 10px; margin: 3px 0; padding: 0 0.45em; border-radius: 10pt; color: @identity-fg; background: transparent; box-shadow: none; text-shadow: none; }
+window#waybar.top #workspaces button.active { background: @wb-act-bg; color: @wb-act-fg; margin-left: 0.3em; margin-right: 0.3em; padding-left: 1.2em; padding-right: 1.2em; transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682); }
+window#waybar.top #workspaces button:hover { background-color: @wb-hvr-bg; color: @identity-hover-fg; transition: all 0.3s cubic-bezier(.55,-0.68,.48,1.682); }
+window#waybar.top #cpu, window#waybar.top #memory { font-size: 10px; padding: 0 5px; margin: 3px 1px; }
+window#waybar.top #mpris { padding: 0 3px; margin: 3px 0; }
+window#waybar.top #mpris.title { font-size: 10px; }
+window#waybar.top #mpris.previous, window#waybar.top #mpris.play, window#waybar.top #mpris.next { font-size: 13px; }
+window#waybar.top #clock { font-weight: 600; font-size: 11px; padding: 0 9px; border-radius: 10pt; background: alpha(@main-fg,0.035); }
+window#waybar.top #pulseaudio, window#waybar.top #battery { font-size: 11px; }
+window#waybar.top #pulseaudio.microphone { font-size: 13px; }
+window#waybar.top #custom-control-center, window#waybar.top #custom-power { font-size: 14px; padding: 0 6px; color: @identity-fg; }
+window#waybar.top #custom-control-center.notification { color: @wb-act-bg; }
+window#waybar.top #custom-control-center.dnd-none, window#waybar.top #custom-control-center.dnd-notification, window#waybar.top #pulseaudio.muted { color: alpha(@main-fg,0.5); }
+window#waybar.top #tray { margin: 6px 3px; padding: 0 6px; border-left: 1px solid alpha(@main-fg,0.16); }
+window#waybar.top label.module:hover { background-color: @wb-hvr-bg; color: @identity-hover-fg; border-radius: 10pt; }
+#battery.warning, #battery.critical { color: @wb-hvr-bg; }
+tooltip, menu { background: @main-bg; color: @identity-fg; border-radius: 10pt; border: 1px solid alpha(@main-fg,0.2); }
+menu calendar { padding: 10px; }
+
+/* Final control groups; preserve layout, palette and the centered clock. */
+window#waybar.top #custom-arch, window#waybar.top #workspaces button {
+ min-width: 10px; min-height: 0; padding: 0 0.45em; margin: 3px 0;
+ font-size: 10px; border-radius: 10pt; background-color: transparent;
+}
+window#waybar.top #custom-arch {
+ background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/archlinux-symbolic.svg"));
+ background-size: 16px 16px; background-position: center; background-repeat: no-repeat;
+}
+window#waybar.top #workspaces button.active { background-color: @wb-act-bg; margin-left: 0.3em; margin-right: 0.3em; padding-left: 1.2em; padding-right: 1.2em; }
+window#waybar.top #custom-arch:hover, window#waybar.top #workspaces button:hover { background-color: @wb-hvr-bg; color: @identity-hover-fg; }
+#applications, #audio-battery, #tools { background: alpha(@main-fg,0.035); border-radius: 12px; margin: 4px 3px; padding: 0 3px; }
+window#waybar.top #tray { border: none; padding: 0 4px; margin: 3px 1px; }
+window#waybar.top #custom-hyprsunset, window#waybar.top #custom-theme,
+window#waybar.top #custom-wallchange, window#waybar.top #custom-caffeine,
+window#waybar.top #custom-hyde-menu { font-size: 13px; padding: 0 5px; margin: 3px 0; }
+window#waybar.top #custom-caffeine.activated { background-color: @wb-act-bg; color: @wb-act-fg; border-radius: 10pt; }
+window#waybar.top #custom-control-center { padding: 0 5px; margin-right: 5px; }
+window#waybar.top #custom-power { border-left: 1px solid alpha(@main-fg,0.16); padding-left: 9px; margin-left: 2px; }
+
+/* Cohesive outline SVGs; identical geometry for every quick-control button. */
+window#waybar.top #custom-hyprsunset,
+window#waybar.top #custom-theme,
+window#waybar.top #custom-wallchange,
+window#waybar.top #custom-caffeine,
+window#waybar.top #custom-hyde-menu,
+window#waybar.top #custom-control-center,
+window#waybar.top #custom-power {
+ font-size: 10px; min-width: 16px; padding: 0 6px; margin-top: 3px; margin-bottom: 3px;
+ border-radius: 10pt; background-size: 14px 14px;
+ background-position: center; background-repeat: no-repeat;
+}
+window#waybar.top #custom-hyprsunset { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/sun-moon-symbolic.svg")); }
+window#waybar.top #custom-theme { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/paintbrush-symbolic.svg")); }
+window#waybar.top #custom-wallchange { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/image-symbolic.svg")); }
+window#waybar.top #custom-caffeine { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/coffee-symbolic.svg")); }
+window#waybar.top #custom-hyde-menu { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/sliders-horizontal-symbolic.svg")); }
+window#waybar.top #custom-control-center { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/panel-right-open-symbolic.svg")); }
+window#waybar.top #custom-power { background-image: -gtk-recolor(url("@HOME@/.config/waybar/assets/lucide/power-symbolic.svg")); }
+
+/* Arch matches the selected workspace's box, colors and clickable area. */
+window#waybar.top #custom-arch, window#waybar.top #workspaces button.active {
+ min-width: 10px; padding-left: 1.2em; padding-right: 1.2em;
+ margin-left: 0.3em; margin-right: 0.3em; margin-top: 3px; margin-bottom: 3px;
+ font-size: 10px; border-radius: 10pt; background-color: @wb-act-bg; color: @wb-act-fg;
+}
+window#waybar.top #custom-arch:hover, window#waybar.top #clock:hover {
+ background-color: @wb-hvr-bg; color: @identity-hover-fg;
+}
+/* Explicit clock selector wins over its normal background and inherited label hover. */
+window#waybar.top #clock:hover { border-radius: 10pt; }
+window#waybar.top #custom-power { padding-left: 9px; padding-right: 6px; }
+
+/* Small gaps between quick controls; keep the same clickable height. */
+window#waybar.top #custom-hyprsunset,
+window#waybar.top #custom-theme,
+window#waybar.top #custom-wallchange,
+window#waybar.top #custom-caffeine,
+window#waybar.top #custom-hyde-menu { margin-left: 1px; margin-right: 1px; }
+/* Hover must beat notification/DND foreground rules for the symbolic SVG. */
+window#waybar.top #custom-control-center:hover {
+ background-color: @wb-hvr-bg; color: @identity-hover-fg;
+}
+
+/* Match the outer controls to the nested tools' 24px clickable height. */
+window#waybar.top #custom-control-center,
+window#waybar.top #custom-power {
+ min-width: 16px; min-height: 0; padding: 0 6px; margin: 7px 3px;
+ border: none; border-radius: 10pt; background-color: alpha(@main-fg,0.035);
+ background-size: 14px 14px; background-position: center;
+}
+window#waybar.top #custom-control-center:hover,
+window#waybar.top #custom-power:hover {
+ background-color: @wb-hvr-bg; color: @identity-hover-fg; border-radius: 10pt;
+}
+
+/* Equal, legible speaker/microphone glyphs; mute is indicated by the icon. */
+window#waybar.top #pulseaudio,
+window#waybar.top #pulseaudio.muted,
+window#waybar.top #pulseaudio.source-muted,
+window#waybar.top #pulseaudio.microphone {
+ font-family: "JetBrainsMono Nerd Font"; font-size: 13px;
+ min-width: 16px; color: @identity-fg; opacity: 1;
+}
+window#waybar.top #pulseaudio:hover,
+window#waybar.top #pulseaudio.muted:hover,
+window#waybar.top #pulseaudio.source-muted:hover,
+window#waybar.top #pulseaudio.microphone:hover { color: @identity-hover-fg; }
+
+/* HyDE reports alt; expose it as the native custom-module CSS class. */
+window#waybar.top #custom-hyprsunset.active {
+ background-color: @wb-act-bg; color: @wb-act-fg;
+}
+window#waybar.top #custom-hyprsunset.active:hover,
+window#waybar.top #custom-hyprsunset.inactive:hover {
+ background-color: @wb-hvr-bg; color: @identity-hover-fg;
+}
+/* Tray items are GtkEventBox widgets, not labels. Keep hover geometry fixed. */
+window#waybar.top #tray > widget {
+ padding: 2px 3px; border-radius: 999px; background-color: transparent;
+}
+window#waybar.top #tray > widget:hover {
+ background-color: alpha(@wb-hvr-bg,0.24);
+ box-shadow: inset 0 0 0 1px alpha(@wb-hvr-bg,0.65);
+}
+
+/* Slightly smaller right-hand controls, with genuine round tray hit areas. */
+window#waybar.top #tray > widget {
+ padding: 0; margin: 2px 0;
+ border-radius: 999px;
+}
+window#waybar.top #custom-hyprsunset,
+window#waybar.top #custom-theme,
+window#waybar.top #custom-wallchange,
+window#waybar.top #custom-caffeine,
+window#waybar.top #custom-hyde-menu {
+ min-width: 14px; padding: 0 5px; margin-top: 4px; margin-bottom: 4px;
+ background-size: 13px 13px;
+}
+window#waybar.top #custom-control-center,
+window#waybar.top #custom-power {
+ min-width: 14px; padding: 0 5px; margin: 8px 3px;
+ background-size: 13px 13px;
+}
+window#waybar.top #pulseaudio,
+window#waybar.top #pulseaudio.muted,
+window#waybar.top #pulseaudio.source-muted,
+window#waybar.top #pulseaudio.microphone {
+ font-size: 12px; min-width: 14px; padding: 0 4px; margin-top: 4px; margin-bottom: 4px;
+}
+window#waybar.top #battery { font-size: 10.5px; padding: 0 4px; margin-top: 4px; margin-bottom: 4px; }
+
+window#waybar.top #tray > widget > image { padding: 0 4px; }
