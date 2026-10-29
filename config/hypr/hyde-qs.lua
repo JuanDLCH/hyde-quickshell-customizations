@@ -15,8 +15,8 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("quickshell -c powermenu")
 end)
 
--- Plain F-keys stay free for apps (F2 rename, F5 refresh, F11 fullscreen...).
-for _, key in ipairs({ "F10", "F11", "F12" }) do hl.unbind(key) end
+-- Plain F-keys stay free for apps (F2 rename, F5 refresh...).
+for _, key in ipairs({ "F10", "F12" }) do hl.unbind(key) end
 
 -- OSD: volume, brightness and Caps Lock through SwayOSD.
 for _, b in ipairs({
@@ -53,11 +53,14 @@ hl.unbind("SUPER + L")
 hl.bind("SUPER + L", hl.dsp.exec_cmd("sh -c 'loginctl lock-session; sleep 1.5; systemctl suspend -i'"),
     { description = "[Session] lock and suspend" })
 
--- Alt+Enter cycles normal > maximized > fullscreen.
+-- Alt+Enter toggles maximized <-> normal; F11 toggles real fullscreen.
+local function toggle_state(target)
+    local w = assert(hl.get_active_window(), "No active window")
+    local state = (tonumber(w.fullscreen) or 0) == target and 0 or target
+    hl.dispatch(hl.dsp.window.fullscreen_state({ internal = state, client = state, window = w }))
+end
 hl.unbind("SHIFT + F11")
+hl.unbind("F11")
 hl.unbind("ALT + RETURN")
-hl.bind("ALT + RETURN", function()
-    local w = assert(hl.get_active_window(), "No active window to toggle fullscreen")
-    local next_state = ((tonumber(w.fullscreen) or 0) + 1) % 3
-    hl.dispatch(hl.dsp.window.fullscreen_state({ internal = next_state, client = next_state, window = w }))
-end, { description = "[Window Management] cycle maximize / fullscreen" })
+hl.bind("ALT + RETURN", function() toggle_state(1) end, { description = "[Window Management] toggle maximize" })
+hl.bind("F11", function() toggle_state(2) end, { description = "[Window Management] toggle fullscreen" })

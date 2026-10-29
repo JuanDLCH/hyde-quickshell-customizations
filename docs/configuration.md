@@ -28,7 +28,8 @@ Defined in `config/hypr/hyde-qs.lua`:
 | `Super+N` / `Super+Shift+N` | notification center / Do Not Disturb |
 | `Print` / `Super+Shift+S` | full screenshot / window or zone picker |
 | `Super+L` | lock and suspend |
-| `Alt+Enter` | normal, maximized, fullscreen |
+| `Alt+Enter` | toggle maximized |
+| `F11` | toggle fullscreen |
 | volume, brightness, Caps Lock | SwayOSD |
 
 Waybar: click the clock for the dashboard, the music widget for the Media tab, the right-most button for the power menu.
