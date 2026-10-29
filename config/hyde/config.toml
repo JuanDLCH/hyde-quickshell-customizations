@@ -1,0 +1,17 @@
+# Snippet for ~/.config/hyde/config.toml. The installer only writes this file when you have none;
+# otherwise merge these keys by hand.
+"$schema" = "https://raw.githubusercontent.com/HyDE-Project/HyDE/refs/heads/master/Configs/.local/share/hyde/schema/config.toml.json"
+
+# Validated, bounded weather output for the lock screen (see docs/configuration.md for the location).
+weather_cmd = "@HOME@/.config/hyde/scripts/audit-weather.sh"
+
+# The Quickshell notification center replaces dunst/swaync: stop wallbash from relaunching them.
+wallbash_skip_template = ["dunst[.](dcol|theme)$", "(^|/)swaync[.](dcol|theme)$"]
+
+[volume]
+notify = false
+
+# Appearance transitions: awww backend, native 60 Hz animation.
+[wallpaper.awww]
+duration = 0.20
+framerate = 60
