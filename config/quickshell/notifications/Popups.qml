@@ -35,7 +35,7 @@ Scope {
             verticalLayoutDirection: ListView.BottomToTop
             interactive: false
             spacing: 8
-            model: ScriptModel { values: scope.hub.popups }
+            model: ScriptModel { values: scope.hub.popups; objectProp: "uid" }
 
             add: Transition {
                 ParallelAnimation {

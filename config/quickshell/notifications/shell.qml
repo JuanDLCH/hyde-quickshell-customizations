@@ -52,9 +52,28 @@ ShellRoot {
                 live: n
             }
             n.closed.connect(() => { rec.live = null; rec.actions = [] })
-            root.history = [rec].concat(root.history).slice(0, 100)
-            if (!root.dnd || n.urgency === NotificationUrgency.Critical) root.popups = [rec].concat(root.popups)
-            if (!root.dnd || n.urgency === NotificationUrgency.Critical) {
+            // Stack tag (x-canonical-private-synchronous / x-dunst-stack-tag): a sender that re-notifies with the
+            // same tag (countdowns, progress) updates one card in place instead of piling up new ones.
+            const h = n.hints || {}
+            const tag = String(h["x-canonical-private-synchronous"] || h["x-dunst-stack-tag"] || "")
+            let replaced = false, wasPopup = false
+            if (tag !== "") {
+                rec.tag = tag
+                const key = rec.appName + "\u0000" + tag
+                if (Date.now() - (root.dismissedTags[key] || 0) < 120000) { n.dismiss(); return }
+                const old = root.history.find(x => x.appName === rec.appName && x.tag === tag)
+                if (old) {
+                    replaced = true
+                    wasPopup = root.popups.some(x => x.uid === old.uid)
+                    rec.uid = old.uid
+                    if (old.live) { try { old.live.dismiss() } catch (e) {} }
+                    root.history = root.history.map(x => x.uid === old.uid ? rec : x)
+                    root.popups = root.popups.map(x => x.uid === old.uid ? rec : x)
+                }
+            }
+            if (!replaced) root.history = [rec].concat(root.history).slice(0, 100)
+            if (!replaced && (!root.dnd || n.urgency === NotificationUrgency.Critical)) root.popups = [rec].concat(root.popups)
+            if (!replaced && (!root.dnd || n.urgency === NotificationUrgency.Critical)) {
                 const text = ((n.appName || "") + " " + (n.summary || "") + " " + (n.body || "")).toLowerCase()
                 if ((n.appName || "") === "claude-code") {
                     // sounds for Claude Code come from its hooks (~/.claude/hooks), which know why it notified
@@ -65,6 +84,7 @@ ShellRoot {
         }
     }
     property int seq: 0
+    property var dismissedTags: ({})
     FileView {
         id: claudeLog
         path: root.stateDir + "/claude-log.txt"
@@ -107,6 +127,7 @@ ShellRoot {
     function hidePopup(r) { popups = popups.filter(x => x.uid !== r.uid) }
     function dismiss(r) {
         const orig = history.find(x => x.uid === r.uid)
+        if (orig && orig.tag) dismissedTags[orig.appName + "\u0000" + orig.tag] = Date.now()
         hidePopup(r)
         history = history.filter(x => x.uid !== r.uid)
         if (orig && orig.live) { try { orig.live.dismiss() } catch (e) {} }
