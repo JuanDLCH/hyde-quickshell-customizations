@@ -64,7 +64,8 @@ Scope {
                     notif: row.modelData
                     popup: true
                     timeoutMs: row.modelData.expireTimeout > 0 ? Math.max(2500, row.modelData.expireTimeout)   // quickshell reports milliseconds
-                             : row.modelData.urgency === NotificationUrgency.Low ? 4000 : 6000
+                             : row.modelData.urgency === NotificationUrgency.Low ? 4000
+                             : row.modelData.urgency === NotificationUrgency.Critical ? 15000 : 6000
                     onExpired: scope.hub.hidePopup(row.modelData)
                     onDismissed: scope.hub.dismiss(row.modelData)
                 }

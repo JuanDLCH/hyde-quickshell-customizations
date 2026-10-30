@@ -29,7 +29,7 @@ Rectangle {
     readonly property bool isClaude: ((notif.appName || "") + " " + (notif.summary || "")).toLowerCase().indexOf("claude") >= 0
     function plain(t) { return (t || "").replace(/<[^>]+>/g, "") }
 
-    implicitHeight: col.implicitHeight + 22 + (popup && !critical && timeoutMs > 0 ? 8 : 0)
+    implicitHeight: col.implicitHeight + 22 + (popup && timeoutMs > 0 ? 8 : 0)
     radius: 20
     color: critical ? theme.alpha(theme.mix(theme.card, Qt.color("#f38ba8"), 0.16), 0.95) : theme.alpha(theme.mix(theme.bg, theme.card, 0.9), 0.97)
     border.width: critical ? 1.5 : 1
@@ -65,7 +65,7 @@ Rectangle {
     property real remaining: 1
     NumberAnimation on remaining {
         id: countdown
-        running: card.popup && !card.critical && card.timeoutMs > 0 && !hov.hovered && !swipe.active
+        running: card.popup && card.timeoutMs > 0 && !hov.hovered && !swipe.active
         from: card.remaining; to: 0
         duration: Math.max(50, card.remaining * card.timeoutMs)
         onFinished: card.expired()
@@ -73,7 +73,7 @@ Rectangle {
 
     // safety net: a popup never outlives its timeout by much, even if hover/drag state gets stuck
     Timer {
-        running: card.popup && !card.critical && card.timeoutMs > 0
+        running: card.popup && card.timeoutMs > 0
         interval: card.timeoutMs + 12000
         onTriggered: card.expired()
     }
@@ -195,7 +195,7 @@ Rectangle {
 
     // timeout bar: inset pill inside the card so it never touches the rounded corners
     Rectangle {
-        visible: card.popup && !card.critical && card.timeoutMs > 0
+        visible: card.popup && card.timeoutMs > 0
         anchors.bottom: parent.bottom; anchors.bottomMargin: 6
         anchors.left: parent.left; anchors.leftMargin: 18
         height: 3; radius: 1.5
