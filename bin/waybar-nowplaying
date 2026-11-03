@@ -19,6 +19,7 @@ import sys, json, html
 t, _, a = sys.stdin.read().rstrip("\n").partition("\t")
 cut = lambda s, n: s if len(s) <= n else s[: n - 1] + "…"
 e = lambda s: html.escape(s, quote=False)
-text = "<span size=\"9500\">%s</span>" % e(cut(t, 18))
-if a: text += "\n<span size=\"8500\" alpha=\"65%%\">%s</span>" % e(cut(a, 22))
+text = "<span size=\"8000\" line_height=\"0.85\">%s" % e(cut(t, 18))
+if a: text += "\n<span size=\"7000\" alpha=\"65%%\">%s</span>" % e(cut(a, 22))
+text += "</span>"
 print(json.dumps({"text": text, "tooltip": False}))'

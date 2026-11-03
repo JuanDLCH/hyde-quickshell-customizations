@@ -3,6 +3,11 @@
 -- Keyboard layout is personal: set yours in hyprland.lua, e.g. hl.config({ input = { kb_layout = "us" } }).
 local bin = os.getenv("HOME") .. "/.local/bin"
 
+-- Top gap matches the Unified bar's top margin, so spacing above and below the bar is even.
+hl.config({
+    general = { gaps_out = { top = 1, right = 8, bottom = 8, left = 8 } },
+})
+
 -- Quickshell notification center as HyDE's notification daemon.
 hyde.config({
     start = { notifications = "quickshell -c notifications" },

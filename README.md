@@ -19,6 +19,7 @@ My desktop on top of [HyDE](https://github.com/HyDE-Project/HyDE) (Hyprland on A
 - **Power menu** (Quickshell, wlogout fallback) and **screenshot picker** (`Print`, `Super+Shift+S`).
 - **OSD** with SwayOSD for volume, brightness, Caps Lock and mic.
 - **Hyprland additions** (Lua), hypridle, hyprsunset night light, Catppuccin Mocha theme files.
+- **Lock screen safety layer**: `hyprlock.sh` override that keeps HyDE's hyprlock but disables PAM-backed previews.
 - **Claude Code hooks**: desktop notification and sound when Claude needs you or finishes a long task.
 
 Details and more screenshots: [docs/components.md](docs/components.md).
@@ -43,7 +44,7 @@ Problems? [docs/troubleshooting.md](docs/troubleshooting.md).
 
 ## Not included on purpose
 
-Wallpapers, laptop-specific hardware keys (touchpad, camera, power profile, lid handling), patched binaries and any credentials. See [SECURITY.md](SECURITY.md).
+Wallpapers, laptop Fn keys and lid handling (those live in [dotfiles](https://github.com/JuanDLCH/dotfiles); the bar shows their camera/touchpad/power-profile indicators when it is installed), patched binaries and any credentials. See [SECURITY.md](SECURITY.md).
 
 ## Credits
 

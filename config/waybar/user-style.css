@@ -44,7 +44,8 @@ window#waybar.top #pulseaudio.microphone,
 window#waybar.top #custom-camera,
 window#waybar.top #custom-touchpad,
 window#waybar.top #custom-profile { font-size: 16px; min-width: 18px; padding: 0 5px; }
-window#waybar.top #battery { font-size: 12px; }
+window#waybar.top #battery,
+window#waybar.top #upower { font-size: 12px; }
 
 /* Cover + title + artist behave as one item (click opens the notification center). */
 window#waybar.top #nowplaying { border-radius: 10pt; padding: 0 3px; margin: 3px 0; }
@@ -72,3 +73,21 @@ window#waybar.top #image.cover { margin: 0; background: transparent; padding: 0;
 window#waybar.top #custom-nowplaying { margin-left: 3px; border-radius: 12px 0 0 12px; padding: 0 6px 0 8px; font-size: 9px; }
 window#waybar.top #custom-mnext { margin-right: 3px; padding-right: 6px; border-radius: 0 12px 12px 0; }
 window#waybar.top #custom-nowplaying:hover { background: @wb-hvr-bg; }
+
+/* Compact status icons (camera/touchpad/profile/mic/volume/battery): tight padding so they sit close together. */
+window#waybar.top #custom-camera,
+window#waybar.top #custom-touchpad,
+window#waybar.top #custom-profile,
+window#waybar.top #pulseaudio,
+window#waybar.top #pulseaudio.muted,
+window#waybar.top #pulseaudio.source-muted,
+window#waybar.top #pulseaudio.microphone { min-width: 0; padding: 0 4px; margin-left: 0; margin-right: 0; }
+window#waybar.top #battery,
+window#waybar.top #upower { padding: 0 4px; margin-left: 0; margin-right: 0; }
+window#waybar.top #audio-battery { padding: 0 4px; }
+
+/* Batería del mouse (upower es una caja, no un label: necesita su propio hover). */
+window#waybar.top #upower:hover {
+ background-color: @wb-hvr-bg; border-radius: 10pt;
+}
+window#waybar.top #upower:hover label { color: @identity-hover-fg; }

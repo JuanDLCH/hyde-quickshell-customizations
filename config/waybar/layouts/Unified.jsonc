@@ -136,6 +136,32 @@
     "on-click": "hyde-shell volumecontrol -i m",
     "on-click-right": "pavucontrol -t 4"
   },
+  // Laptop hardware indicators (camera killed by Fn+F6, power profile, touchpad off).
+  // They call `hw` from github.com/JuanDLCH/dotfiles; without it they stay hidden.
+  "custom/camera": {
+    "return-type": "json",
+    "format": "{}",
+    "exec": "@HOME@/.local/libexec/hw-keys/hw camera watch",
+    "tooltip": true
+  },
+  "custom/profile": {
+    "return-type": "json",
+    "format": "{}",
+    "exec": "@HOME@/.local/libexec/hw-keys/hw profile status",
+    "interval": 30,
+    "signal": 23,
+    "on-click": "@HOME@/.local/libexec/hw-keys/hw profile",
+    "tooltip": true
+  },
+  "custom/touchpad": {
+    "return-type": "json",
+    "format": "{}",
+    "exec": "@HOME@/.local/libexec/hw-keys/hw touchpad status",
+    "interval": "once",
+    "signal": 22,
+    "on-click": "@HOME@/.local/libexec/hw-keys/hw touchpad enable",
+    "tooltip": true
+  },
   "battery": {
     "interval": 30,
     "states": {
@@ -337,6 +363,9 @@
   "group/audio-battery": {
     "orientation": "horizontal",
     "modules": [
+      "custom/camera",
+      "custom/touchpad",
+      "custom/profile",
       "pulseaudio#microphone",
       "pulseaudio",
       "battery"

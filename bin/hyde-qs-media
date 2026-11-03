@@ -7,18 +7,21 @@ set -u
 
 cover() {
     local st url key out src cache="${XDG_CACHE_HOME:-$HOME/.cache}/hyde-qs"
-    st=$(playerctl status 2>/dev/null) || return 0
-    [[ $st == Playing || $st == Paused ]] || return 0
-    url=$(playerctl metadata mpris:artUrl 2>/dev/null) || return 0
-    [[ -n $url ]] || return 0
+    local none="$cache/none.png"
+    # Waybar's image module keeps the last picture when the command prints nothing,
+    # so with no usable cover print a path that does not exist to clear it.
+    st=$(playerctl status 2>/dev/null) || { echo "$none"; return 0; }
+    [[ $st == Playing || $st == Paused ]] || { echo "$none"; return 0; }
+    url=$(playerctl metadata mpris:artUrl 2>/dev/null) || { echo "$none"; return 0; }
+    [[ -n $url ]] || { echo "$none"; return 0; }
     mkdir -p "$cache"
     key=$(printf %s "$url" | sha1sum | cut -c1-16)
     out="$cache/cover-$key.png"
     if [[ ! -s $out ]]; then
         case $url in
             file://*) src=$(python3 -c 'import sys,urllib.parse as u;print(u.unquote(u.urlparse(sys.argv[1]).path))' "$url") ;;
-            http*) src="$cache/dl-$key"; curl -sfL -m 5 -o "$src" "$url" || return 0 ;;
-            *) return 0 ;;
+            http*) src="$cache/dl-$key"; curl -sfL -m 5 -o "$src" "$url" || { echo "$none"; return 0; } ;;
+            *) echo "$none"; return 0 ;;
         esac
         magick "$src[0]" -resize 96x96^ -gravity center -extent 96x96 \
             \( -size 96x96 xc:none -fill white -draw 'roundrectangle 0,0,95,95,22,22' \) \
