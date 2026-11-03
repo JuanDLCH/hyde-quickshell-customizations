@@ -17,7 +17,7 @@ My desktop on top of [HyDE](https://github.com/HyDE-Project/HyDE) (Hyprland on A
 - **Dashboard** (Quickshell): Home, Calendar (Google Calendar, optional), Media (player + weather), System (CPU, memory, disk, battery, uptime) and Focus (pomodoro + notes).
 - **Notification center and popups** (Quickshell): replaces dunst/swaync, with Do Not Disturb and a Claude Code themed card.
 - **Power menu** (Quickshell, wlogout fallback) and **screenshot picker** (`Print`, `Super+Shift+S`).
-- **OSD** with SwayOSD for volume, brightness, Caps Lock and mic.
+- **OSD** with SwayOSD for volume, brightness, Caps Lock and mic. Optional compact build (`--with-osd-patch`): mic, muted speaker and Caps Lock show as a small square instead of a bar. The patch is source in `swayosd/`, compiled on your machine, and falls back to stock SwayOSD after an update until you rebuild.
 - **Hyprland additions** (Lua), hypridle, hyprsunset night light, Catppuccin Mocha theme files.
 - **Lock screen safety layer**: `hyprlock.sh` override that keeps HyDE's hyprlock but disables PAM-backed previews.
 - **Claude Code hooks**: desktop notification and sound when Claude needs you or finishes a long task.
@@ -33,7 +33,8 @@ cd hyde-quickshell-customizations
 ./install.sh            # asks before installing missing packages
 ```
 
-Options: `--yes` (no questions), `--dry-run`, `--no-claude`, `--with-calendar`, `--no-reload`.
+Options: `--yes` (no questions), `--dry-run`, `--no-claude`, `--with-calendar`, `--with-osd-patch` (needs `rust`), `--no-reload`.
+After a SwayOSD update, rebuild the compact OSD with `scripts/build-swayosd.sh`.
 Everything it replaces is backed up in `~/.local/state/hyde-qs/`, and `./uninstall.sh` restores it.
 Full guide: [docs/install.md](docs/install.md).
 
@@ -44,7 +45,7 @@ Problems? [docs/troubleshooting.md](docs/troubleshooting.md).
 
 ## Not included on purpose
 
-Wallpapers, laptop Fn keys and lid handling (those live in [dotfiles](https://github.com/JuanDLCH/dotfiles); the bar shows their camera/touchpad/power-profile indicators when it is installed), patched binaries and any credentials. See [SECURITY.md](SECURITY.md).
+Wallpapers, laptop Fn keys and lid handling (those live in [dotfiles](https://github.com/JuanDLCH/dotfiles); the bar shows their camera/touchpad/power-profile indicators when it is installed), prebuilt binaries and any credentials. See [SECURITY.md](SECURITY.md).
 
 ## Credits
 

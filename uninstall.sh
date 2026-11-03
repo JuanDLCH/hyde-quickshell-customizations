@@ -17,6 +17,8 @@ if [[ -f $STATE/manifest ]]; then
         [[ -n $f && -e $f ]] && { echo "   remove ${f/#$HOME/~}"; rm -f "$f"; }
     done < "$STATE/manifest"
 fi
+# Compact SwayOSD build from scripts/build-swayosd.sh (install.sh --with-osd-patch).
+rm -rf "$HOME/.local/libexec/hyde-qs"
 HLUA="$HOME/.config/hypr/hyprland.lua"
 [[ -f $HLUA ]] && sed -i "\#^$MARK_BEGIN#,\#^$MARK_END#d" "$HLUA"
 rm -rf "$STATE"

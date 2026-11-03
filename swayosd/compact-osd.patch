@@ -1,0 +1,71 @@
+Compact SwayOSD popups (against SwayOSD 0.3.2, src/server/osd_window.rs):
+  - microphone: a square with the mic / mic-off icon, no bar
+  - speaker muted: the same square with a slashed speaker (volume changes keep the capsule)
+  - Caps Lock: the same square with the caps-lock icon
+Styled by the .microphone / .keylock classes in config/swayosd/style.css.
+Built and installed by scripts/build-swayosd.sh (./install.sh --with-osd-patch).
+
+diff --git a/src/server/osd_window.rs b/src/server/osd_window.rs
+index a66fb36..855d763 100644
+--- a/src/server/osd_window.rs
++++ b/src/server/osd_window.rs
+@@ -146,6 +146,28 @@ impl SwayosdWindow {
+ 		let icon_name = format!("{}-volume-{}-symbolic", icon_prefix, icon_state);
+ 
+ 		let icon = self.build_icon_widget(&icon_name);
++		// User visual variant: microphone-only OSD; device actions stay unchanged.
++		// Speakers: the compact square only appears while muted; volume changes keep the capsule.
++		if matches!(device.kind, DeviceKind::Source)
++			|| (matches!(device.kind, DeviceKind::Sink) && device.mute)
++		{
++			self.window.add_css_class("microphone");
++			self.window.set_width_request(0);
++			self.window.set_default_size(0, 0);
++			let mic_icon = if matches!(device.kind, DeviceKind::Sink) {
++				"speaker-slashed-symbolic"
++			} else if device.mute {
++				"microphone-disabled-symbolic"
++			} else {
++				"audio-input-microphone-symbolic"
++			};
++			let mic_image = self.build_icon_widget(mic_icon);
++			mic_image.set_hexpand(true);
++			mic_image.set_pixel_size(36);
++			self.container.append(&mic_image);
++			self.run_timeout(duration);
++			return;
++		}
+ 		let progress = self.build_progress_widget(volume / max_volume);
+ 		let label = self.build_text_widget(&Some(format!("{}%", volume)), Some(4));
+ 
+@@ -242,6 +264,19 @@ impl SwayosdWindow {
+ 
+ 		self.clear_osd();
+ 
++		if matches!(key, KeysLocks::CapsLock) {
++			self.window.add_css_class("keylock");
++			self.window.set_width_request(0);
++			self.window.set_default_size(0, 0);
++			let icon = self.build_icon_widget("caps-lock-symbolic");
++			icon.set_pixel_size(36);
++			icon.set_hexpand(true);
++			icon.set_sensitive(state);
++			self.container.append(&icon);
++			self.run_timeout(duration);
++			return;
++		}
++
+ 		let label = self.build_text_widget(&None, None);
+ 		label.set_hexpand(true);
+ 
+@@ -362,6 +397,10 @@ impl SwayosdWindow {
+ 
+ 	/// Clear all container children
+ 	fn clear_osd(&self) {
++		self.window.remove_css_class("microphone");
++		self.window.remove_css_class("keylock");
++		self.window.set_width_request(250);
++		self.window.set_default_size(0, 0);
+ 		let mut next = self.container.first_child();
+ 		while let Some(widget) = next {
+ 			next = widget.next_sibling();

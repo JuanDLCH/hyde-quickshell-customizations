@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Start the SwayOSD server: the compact-OSD build from scripts/build-swayosd.sh when it
+# matches the installed SwayOSD, else the stock server. Arguments go to swayosd-server.
+set -euo pipefail
+dir="$HOME/.local/libexec/hyde-qs"
+stock=/usr/bin/swayosd-server
+if [[ -x $dir/swayosd-server && -r $dir/swayosd-server.base-sha256 && -x $stock ]]; then
+    read -r want <"$dir/swayosd-server.base-sha256"
+    read -r have _ < <(sha256sum "$stock")
+    [[ $want == "$have" ]] && exec "$dir/swayosd-server" "$@"
+fi
+exec "$stock" "$@"

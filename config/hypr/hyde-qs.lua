@@ -15,6 +15,9 @@ hyde.config({
 
 -- Dashboard, screenshot picker and power menu run as always-on Quickshell instances.
 hl.on("hyprland.start", function()
+    -- HyDE never starts the SwayOSD server (its scripts only use it when it runs).
+    -- hyde-qs-swayosd picks the compact-OSD build when present (install.sh --with-osd-patch).
+    hl.exec_cmd(bin .. "/hyde-qs-swayosd --top-margin 0.84")
     hl.exec_cmd("quickshell -c calendar")
     hl.exec_cmd("quickshell -c screenshot")
     hl.exec_cmd("quickshell -c powermenu")

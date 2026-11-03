@@ -7,6 +7,7 @@
 #   --no-claude      skip the Claude Code hooks and sounds
 #   --with-calendar  also set up the Google Calendar backend (venv + systemd timers)
 #   --no-reload      do not reload Hyprland / restart waybar and Quickshell
+#   --with-osd-patch build SwayOSD with swayosd/compact-osd.patch (needs rust)
 set -euo pipefail
 
 SRC=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -17,7 +18,7 @@ MANIFEST="$STATE/manifest"
 MARK_BEGIN='-- >>> hyde-quickshell-customizations >>>'
 MARK_END='-- <<< hyde-quickshell-customizations <<<'
 
-YES=0 DRY=0 CLAUDE=1 CALENDAR=0 RELOAD=1
+YES=0 DRY=0 CLAUDE=1 CALENDAR=0 RELOAD=1 OSDPATCH=0
 for a in "$@"; do
     case $a in
         --yes|-y) YES=1 ;;
@@ -25,6 +26,7 @@ for a in "$@"; do
         --no-claude) CLAUDE=0 ;;
         --with-calendar) CALENDAR=1 ;;
         --no-reload) RELOAD=0 ;;
+        --with-osd-patch) OSDPATCH=1 ;;
         -h|--help) sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $a" >&2; exit 2 ;;
     esac
@@ -169,11 +171,20 @@ if ((CALENDAR)); then
     warn "Calendar needs your own Google OAuth client: open $CAL/GOOGLE_SETUP.html"
 fi
 
+# ---- compact SwayOSD (optional) ---------------------------------------------
+if ((OSDPATCH)); then
+    say "Building SwayOSD with the compact-OSD patch"
+    if ((DRY)); then "$SRC/scripts/build-swayosd.sh" --dry-run || warn "SwayOSD patch check failed"
+    else "$SRC/scripts/build-swayosd.sh" || warn "SwayOSD patch not installed; the stock server keeps working"; fi
+fi
+
 # ---- reload -----------------------------------------------------------------
 if ((RELOAD && !DRY)) && [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
     say "Reloading"
     hyprctl reload >/dev/null 2>&1 || true
     pkill -SIGUSR2 waybar 2>/dev/null || true
+    pkill -x swayosd-server 2>/dev/null || true
+    setsid -f "$HOME/.local/bin/hyde-qs-swayosd" --top-margin 0.84 >/dev/null 2>&1 || true
     for c in notifications calendar screenshot powermenu; do
         pkill -f "quickshell -c $c" 2>/dev/null || true
         setsid -f quickshell -c "$c" >/dev/null 2>&1 || true
